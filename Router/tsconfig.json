@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es2022",
+    "outDir": "wwwroot/js",
+    "typeRoots": ["./types"]
+  },
+  "include": [
+    "scripts/**/*"
+  ]
+}
