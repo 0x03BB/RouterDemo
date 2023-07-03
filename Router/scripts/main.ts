@@ -6,7 +6,7 @@ import * as about from './templates/about.js';
 const appDiv = document.getElementById('app') as HTMLDivElement;
 const notFoundTemplate = document.getElementById('not-found') as HTMLTemplateElement;
 
-const router = new Router(
+Router.initialize(
     appDiv,
     (parentElement: HTMLElement) => {
         parentElement.replaceChildren(notFoundTemplate.content.cloneNode(true));
@@ -16,4 +16,4 @@ const router = new Router(
     about.route
 ]);
 
-router.route();
+Router.route();

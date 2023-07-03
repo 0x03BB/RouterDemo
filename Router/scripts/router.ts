@@ -1,20 +1,20 @@
 class Router {
-    parentElement: HTMLElement;
-    loadNotFound: Loader;
-    routes: Map<string, Loader>;
+    static parentElement: HTMLElement;
+    static loadDefault: Loader;
+    static routes: Map<string, Loader>;
 
-    constructor(parentElement: HTMLElement, loadNotFound: Loader, routes: Route[]) {
-        this.parentElement = parentElement;
-        this.loadNotFound = loadNotFound;
-        this.intercept = this.intercept.bind(this);
-        this.route = this.route.bind(this);
-        this.routes = new Map(routes);
-
-        window.addEventListener('popstate', this.route);
-        window.addEventListener('click', this.intercept);
+    static {
+        window.addEventListener('popstate', Router.route);
+        window.addEventListener('click', Router.intercept);
     }
 
-    intercept(event) {
+    static initialize(parentElement: HTMLElement, loadDefault: Loader, routes: Route[]) {
+        Router.parentElement = parentElement;
+        Router.loadDefault = loadDefault;
+        Router.routes = new Map(routes);
+    }
+
+    static intercept(event) {
         const element = event.target.closest('a[href]');
         if (element !== null) {
             const href = element.href;
@@ -23,18 +23,19 @@ class Router {
                 event.preventDefault();
                 history.pushState(null, '', href);
 
-                this.route();
+                    Router.route();
+                }
             }
         }
     }
 
-    route() {
-        const load = this.routes.get(window.location.pathname);
+    static route() {
+        const load = Router.routes.get(window.location.pathname);
         if (load === undefined) {
-            this.loadNotFound(this.parentElement);
+            Router.loadDefault(Router.parentElement);
         }
         else {
-            load(this.parentElement);
+            load(Router.parentElement);
         }
     }
 }
