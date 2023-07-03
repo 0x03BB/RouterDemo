@@ -14,14 +14,15 @@ class Router {
         Router.routes = new Map(routes);
     }
 
-    static intercept(event) {
-        const element = event.target.closest('a[href]');
-        if (element !== null) {
-            const href = element.href;
-            const url = new URL(href, window.location.origin);
-            if (url.origin === window.location.origin) {
-                event.preventDefault();
-                history.pushState(null, '', href);
+    static intercept(event: MouseEvent) {
+        if (event.target instanceof Element) {
+            const element = event.target.closest('a[href]') as HTMLAnchorElement | null;
+            if (element !== null) {
+                const href = element.href;
+                const url = new URL(href, window.location.origin);
+                if (url.origin === window.location.origin) {
+                    event.preventDefault();
+                    history.pushState(null, '', href);
 
                     Router.route();
                 }

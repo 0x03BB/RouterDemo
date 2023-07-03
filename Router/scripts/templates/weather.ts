@@ -33,10 +33,12 @@ async function fetchWeather(tableBody: HTMLElement) {
             tableBody.replaceChildren();
             items.forEach(item => {
                 let newRow = _rowTemplate.content.cloneNode(true) as HTMLTableRowElement;
-                let newCells = newRow.firstElementChild.children;
+                let newCells = newRow.firstElementChild!.children;
                 newCells[0].textContent = item.date.toString();
                 newCells[1].textContent = item.temperatureF.toString();
-                newCells[2].textContent = item.summary;
+                if (item.summary !== undefined) {
+                    newCells[2].textContent = item.summary;
+                }
                 tableBody.appendChild(newRow);
             });
         } else {

@@ -8,7 +8,7 @@ const notFoundTemplate = document.getElementById('not-found') as HTMLTemplateEle
 
 Router.initialize(
     appDiv,
-    (parentElement: HTMLElement) => {
+    (parentElement) => {
         parentElement.replaceChildren(notFoundTemplate.content.cloneNode(true));
     }, [
     home.route,
