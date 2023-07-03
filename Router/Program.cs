@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.StaticFiles;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -24,12 +26,21 @@ app.MapWhen(context => context.Request.Path.StartsWithSegments("/api"), api =>
 });
 
 // SPA pipeline.
-app.UseStaticFiles();
+var contentTypeProvider = new FileExtensionContentTypeProvider();
+var mappings = contentTypeProvider.Mappings;
+mappings[".html"] += "; charset=utf-8";
+mappings[".js"] += "; charset=utf-8";
+var staticFileOptions = new StaticFileOptions()
+{
+    ContentTypeProvider = contentTypeProvider
+};
+
+app.UseStaticFiles(staticFileOptions);
 
 app.UseRouting();
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapFallbackToFile("index.html");
+    endpoints.MapFallbackToFile("index.html", staticFileOptions);
 });
 
 app.Run();
