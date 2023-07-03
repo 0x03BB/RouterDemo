@@ -2,14 +2,15 @@ class Weather implements Page {
     #template: HTMLTemplateElement;
     #rowTemplate: HTMLTemplateElement;
     #errorTemplate: HTMLTemplateElement;
+    #callback?: () => Promise<void>;
+
+    route = '/weather';
 
     constructor(templateDocument: Document) {
         this.#template = templateDocument.getElementById('weather') as HTMLTemplateElement;
-        this.#rowTemplate = templateDocument.getElementById('weatherRow') as HTMLTemplateElement;
-        this.#errorTemplate = templateDocument.getElementById('weatherError') as HTMLTemplateElement;
+        this.#rowTemplate = templateDocument.getElementById('weather-row') as HTMLTemplateElement;
+        this.#errorTemplate = templateDocument.getElementById('weather-error') as HTMLTemplateElement;
     }
-
-    route = '/weather';
 
     load(parentElement: HTMLElement) {
         const clone = this.#template.content.cloneNode(true);
@@ -17,8 +18,8 @@ class Weather implements Page {
         const update = document.getElementById('update') as HTMLButtonElement;
         const tableBody = document.getElementById('table-body') as HTMLElement;
 
-        update.addEventListener('click', () => this.#fetchWeather(tableBody), { passive: true });
-        this.#fetchWeather(tableBody);
+        update.addEventListener('click', this.#callback = () => this.#fetchWeather(tableBody), { passive: true });
+        this.#callback();
     }
 
     async #fetchWeather(tableBody: HTMLElement) {
@@ -47,6 +48,7 @@ class Weather implements Page {
     }
 
     reload(parentElement: HTMLElement) {
+        this.#callback!();
     }
 
     unload() {
