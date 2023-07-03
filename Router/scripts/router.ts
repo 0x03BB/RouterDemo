@@ -51,6 +51,7 @@ class Router {
     }
 
     static route() {
+        Router.#currentPage?.unload?.();
         Router.#currentPage = Router.pages.get(window.location.pathname);
         if (Router.#currentPage !== undefined) {
             Router.#currentPage.load(Router.parentElement);
