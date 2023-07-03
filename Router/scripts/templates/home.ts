@@ -1,18 +1,21 @@
-let _template: HTMLTemplateElement;
+class Home implements Page {
+    #template: HTMLTemplateElement;
 
-await (async function () {
-    const parser = new DOMParser();
+    constructor(templateDocument: Document) {
+        this.#template = templateDocument.getElementById('home') as HTMLTemplateElement;
+    }
 
-    const response = await fetch('/templates/home.html');
-    const html = await response.text();
-    const parsedDocument = parser.parseFromString(html, 'text/html');
-    _template = parsedDocument.getElementById('main') as HTMLTemplateElement;
-})();
+    route = '/';
 
-function load(parentElement: HTMLElement) {
-    parentElement.replaceChildren(_template.content.cloneNode(true));
+    load(parentElement: HTMLElement) {
+        parentElement.replaceChildren(this.#template.content.cloneNode(true));
+    }
+
+    reload(parentElement: HTMLElement) {
+    }
+
+    unload() {
+    }
 }
 
-const route: Route = ['/', load];
-
-export { route };
+export { Home };

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -16,12 +16,9 @@
     <Content Include="scripts\templates\about.ts" />
     <Content Include="scripts\templates\home.ts" />
     <Content Include="scripts\templates\weather.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\templates\about.html" />
-    <None Include="wwwroot\templates\home.html" />
-    <None Include="wwwroot\templates\weather.html" />
+    <Content Include="templates\about.html" />
+    <Content Include="templates\home.html" />
+    <Content Include="templates\weather.html" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,5 +27,19 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+
+    <Target Name="ConcatenateTemplates" AfterTargets="Build">
+		<ItemGroup>
+			<TemplateFiles Include="templates\**\*" />
+		</ItemGroup>
+		<ReadLinesFromFile File="%(TemplateFiles.Identity)">
+			<Output TaskParameter="Lines" ItemName="TemplateLines" />
+		</ReadLinesFromFile>
+		<WriteLinesToFile File="wwwroot\templates.html" Lines="@(TemplateLines)" Overwrite="true" />
+	</Target>
+
+	<Target Name="CleanTemplates" AfterTargets="Clean">
+		<Delete Files="wwwroot\templates.html" />
+	</Target>
 
 </Project>

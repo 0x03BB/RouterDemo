@@ -1,17 +1,17 @@
 class Router {
     static parentElement: HTMLElement;
     static loadDefault: Loader;
-    static routes: Map<string, Loader>;
+    static pages: Map<string, Page>;
 
     static {
         window.addEventListener('popstate', Router.route);
         window.addEventListener('click', Router.intercept);
     }
 
-    static initialize(parentElement: HTMLElement, loadDefault: Loader, routes: Route[]) {
+    static initialize(parentElement: HTMLElement, loadDefault: Loader, pages: Page[]) {
         Router.parentElement = parentElement;
         Router.loadDefault = loadDefault;
-        Router.routes = new Map(routes);
+        Router.pages = new Map(pages.map(p => [p.route, p]));
     }
 
     static intercept(event: MouseEvent) {
@@ -31,12 +31,12 @@ class Router {
     }
 
     static route() {
-        const load = Router.routes.get(window.location.pathname);
-        if (load === undefined) {
+        const page = Router.pages.get(window.location.pathname);
+        if (page === undefined) {
             Router.loadDefault(Router.parentElement);
         }
         else {
-            load(Router.parentElement);
+            page.load(Router.parentElement);
         }
     }
 }

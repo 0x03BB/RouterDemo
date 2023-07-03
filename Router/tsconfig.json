@@ -5,6 +5,7 @@
     "removeComments": false,
     "sourceMap": true,
     "target": "es2022",
+    "module": "es2022",
     "outDir": "wwwroot/js",
     "typeRoots": ["./types"]
   },
