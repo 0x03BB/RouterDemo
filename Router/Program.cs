@@ -28,8 +28,9 @@ app.MapWhen(context => context.Request.Path.StartsWithSegments("/api"), api =>
 // SPA pipeline.
 var contentTypeProvider = new FileExtensionContentTypeProvider();
 var mappings = contentTypeProvider.Mappings;
-mappings[".html"] += "; charset=utf-8";
-mappings[".js"] += "; charset=utf-8";
+mappings[".html"] = "text/html; charset=utf-8";
+mappings[".css"] = "text/css; charset=utf-8";
+mappings[".js"] = "text/javascript; charset=utf-8";
 var staticFileOptions = new StaticFileOptions()
 {
     ContentTypeProvider = contentTypeProvider
