@@ -1,8 +1,11 @@
+import { AbortHelper } from '../abort-helper.js';
+
 class Weather implements Page {
     #template: HTMLTemplateElement;
     #rowTemplate: HTMLTemplateElement;
     #errorTemplate: HTMLTemplateElement;
     #callback?: () => Promise<void>;
+    #abortHelper: AbortHelper;
 
     route = '/weather';
 
@@ -10,6 +13,7 @@ class Weather implements Page {
         this.#template = templateDocument.getElementById('weather') as HTMLTemplateElement;
         this.#rowTemplate = templateDocument.getElementById('weather-row') as HTMLTemplateElement;
         this.#errorTemplate = templateDocument.getElementById('weather-error') as HTMLTemplateElement;
+        this.#abortHelper = new AbortHelper();
     }
 
     load(parentElement: HTMLElement) {
@@ -17,14 +21,18 @@ class Weather implements Page {
         parentElement.replaceChildren(clone);
         const update = document.getElementById('update') as HTMLButtonElement;
         const tableBody = document.getElementById('table-body') as HTMLElement;
+        const loadingIndicator = document.getElementById('loading-indicator') as HTMLDivElement;
 
-        update.addEventListener('click', this.#callback = () => this.#fetchWeather(tableBody), { passive: true });
+        update.addEventListener('click', this.#callback = () => this.#fetchWeather(tableBody, loadingIndicator), { passive: true });
         this.#callback();
     }
 
-    async #fetchWeather(tableBody: HTMLElement) {
+    async #fetchWeather(tableBody: HTMLElement, loadingIndicator: HTMLDivElement) {
+        loadingIndicator.style.display = '';
+        this.#abortHelper.start();
+        const signal = this.#abortHelper.signal;
         try {
-            const response = await fetch('/api/WeatherForecast');
+            const response = await fetch('/api/WeatherForecast', { signal });
             if (response.ok) {
                 const items = await response.json() as WeatherForecast[];
 
@@ -43,8 +51,12 @@ class Weather implements Page {
                 tableBody.replaceChildren(this.#errorTemplate.content.cloneNode(true));
             }
         } catch (error) {
-            tableBody.replaceChildren(this.#errorTemplate.content.cloneNode(true));
+            if (!(error instanceof DOMException) || error.name !== 'AbortError') {
+                tableBody.replaceChildren(this.#errorTemplate.content.cloneNode(true));
+            }
         }
+        loadingIndicator.style.display = 'none';
+        this.#abortHelper.complete();
     }
 
     reload(parentElement: HTMLElement) {
@@ -52,6 +64,7 @@ class Weather implements Page {
     }
 
     unload() {
+        this.#abortHelper.abort();
     }
 }
 

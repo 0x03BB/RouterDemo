@@ -45,7 +45,10 @@ class Router {
 
                     Router.route();
                 }
-                // A link to an external site was clicked. Do nothing.
+                else {
+                    // A link to an external site was clicked. Just unload.
+                    Router.#currentPage?.unload?.();
+                }
             }
         }
     }
