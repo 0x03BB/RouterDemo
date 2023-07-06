@@ -1,7 +1,7 @@
 /**
  * Manages an AbortController. Calls abort() and creates new instances as needed.
  */
-export class AbortHelper {
+class AbortHelper {
     #abortControler: AbortController = new AbortController();
     #completed: boolean = true;
 
@@ -38,3 +38,5 @@ export class AbortHelper {
         this.#abortControler.abort();
     }
 }
+
+export { AbortHelper };
