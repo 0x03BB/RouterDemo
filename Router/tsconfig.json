@@ -3,10 +3,10 @@
     "strict": true,
     "noEmitOnError": true,
     "removeComments": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "target": "es2022",
     "module": "es2022",
-    "outDir": "wwwroot/js",
+    "outDir": "build",
     "typeRoots": ["./types"]
   },
   "include": [

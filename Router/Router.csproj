@@ -7,15 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Remove="scripts\templates\about.ts" />
-    <TypeScriptCompile Remove="scripts\templates\home.ts" />
-    <TypeScriptCompile Remove="scripts\templates\weather.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="scripts\templates\about.ts" />
-    <Content Include="scripts\templates\home.ts" />
-    <Content Include="scripts\templates\weather.ts" />
     <Content Include="templates\about.html" />
     <Content Include="templates\home.html" />
     <Content Include="templates\weather.html" />
@@ -28,18 +19,29 @@
     </PackageReference>
   </ItemGroup>
 
-    <Target Name="ConcatenateTemplates" AfterTargets="Build">
-		<ItemGroup>
-			<TemplateFiles Include="templates\**\*" />
-		</ItemGroup>
-		<ReadLinesFromFile File="%(TemplateFiles.Identity)">
-			<Output TaskParameter="Lines" ItemName="TemplateLines" />
-		</ReadLinesFromFile>
-		<WriteLinesToFile File="wwwroot\templates.html" Lines="@(TemplateLines)" Overwrite="true" />
-	</Target>
+  <ItemGroup>
+    <TemplateFiles Include="templates\**\*" />
+    <ScriptFiles Include="build\**\*" Exclude="build\main.js;build\types.js" />
+    <ScriptFiles Include="build\main.js" />
+  </ItemGroup>
+    
+  <Target Name="ConcatenateTemplates" Inputs="@(TemplateFiles)" Outputs="wwwroot\templates.html" BeforeTargets="Build">
+    <ReadLinesFromFile File="%(TemplateFiles.Identity)">
+      <Output TaskParameter="Lines" ItemName="TemplateLines" />
+    </ReadLinesFromFile>
+    <WriteLinesToFile File="wwwroot\templates.html" Lines="@(TemplateLines)" Overwrite="true" />
+  </Target>
 
-	<Target Name="CleanTemplates" AfterTargets="Clean">
-		<Delete Files="wwwroot\templates.html" />
-	</Target>
+  <Target Name="ConcatenateScripts" Inputs="@(ScriptFiles)" Outputs="wwwroot\js\scripts.js" AfterTargets="Build">
+    <ReadLinesFromFile File="%(ScriptFiles.Identity)">
+      <Output TaskParameter="Lines" ItemName="ScriptLines" />
+    </ReadLinesFromFile>
+    <WriteLinesToFile File="wwwroot\js\scripts.js" Lines="@(ScriptLines)" Overwrite="true" />
+  </Target>
+
+  <Target Name="CleanTemplates" AfterTargets="Clean">
+    <Delete Files="wwwroot\templates.html" />
+    <Delete Files="wwwroot\js\scripts.js" />
+  </Target>
 
 </Project>
