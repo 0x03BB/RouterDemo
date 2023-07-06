@@ -7,15 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Remove="scripts\templates\about.ts" />
-    <TypeScriptCompile Remove="scripts\templates\home.ts" />
-    <TypeScriptCompile Remove="scripts\templates\weather.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="scripts\templates\about.ts" />
-    <Content Include="scripts\templates\home.ts" />
-    <Content Include="scripts\templates\weather.ts" />
     <Content Include="templates\about.html" />
     <Content Include="templates\home.html" />
     <Content Include="templates\weather.html" />
@@ -28,18 +19,19 @@
     </PackageReference>
   </ItemGroup>
 
-    <Target Name="ConcatenateTemplates" AfterTargets="Build">
-		<ItemGroup>
-			<TemplateFiles Include="templates\**\*" />
-		</ItemGroup>
-		<ReadLinesFromFile File="%(TemplateFiles.Identity)">
-			<Output TaskParameter="Lines" ItemName="TemplateLines" />
-		</ReadLinesFromFile>
-		<WriteLinesToFile File="wwwroot\templates.html" Lines="@(TemplateLines)" Overwrite="true" />
-	</Target>
+  <ItemGroup>
+      <TemplateFiles Include="templates\**\*" />
+  </ItemGroup>
 
-	<Target Name="CleanTemplates" AfterTargets="Clean">
-		<Delete Files="wwwroot\templates.html" />
-	</Target>
+  <Target Name="ConcatenateTemplates" Inputs="@(TemplateFiles)" Outputs="wwwroot\templates.html" BeforeTargets="Build">
+    <ReadLinesFromFile File="%(TemplateFiles.Identity)">
+      <Output TaskParameter="Lines" ItemName="TemplateLines" />
+    </ReadLinesFromFile>
+    <WriteLinesToFile File="wwwroot\templates.html" Lines="@(TemplateLines)" Overwrite="true" />
+  </Target>
+
+  <Target Name="CleanTemplates" AfterTargets="Clean">
+    <Delete Files="wwwroot\templates.html" />
+  </Target>
 
 </Project>
