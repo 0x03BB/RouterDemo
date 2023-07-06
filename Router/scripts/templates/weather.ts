@@ -50,13 +50,15 @@ class Weather implements Page {
             } else {
                 tableBody.replaceChildren(this.#errorTemplate.content.cloneNode(true));
             }
+            loadingIndicator.style.display = 'none';
+            this.#abortHelper.complete();
         } catch (error) {
             if (!(error instanceof DOMException) || error.name !== 'AbortError') {
                 tableBody.replaceChildren(this.#errorTemplate.content.cloneNode(true));
+                loadingIndicator.style.display = 'none';
+                this.#abortHelper.complete();
             }
         }
-        loadingIndicator.style.display = 'none';
-        this.#abortHelper.complete();
     }
 
     reload(parentElement: HTMLElement) {
