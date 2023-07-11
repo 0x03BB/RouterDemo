@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <Import Project="ReadLinesFromFileWithFilter.targets"/>
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -26,16 +27,16 @@
   </ItemGroup>
     
   <Target Name="ConcatenateTemplates" Inputs="@(TemplateFiles)" Outputs="wwwroot\templates.html" BeforeTargets="Build">
-    <ReadLinesFromFile File="%(TemplateFiles.Identity)">
+    <ReadLinesFromFileWithFilter File="%(TemplateFiles.Identity)">
       <Output TaskParameter="Lines" ItemName="TemplateLines" />
-    </ReadLinesFromFile>
+    </ReadLinesFromFileWithFilter>
     <WriteLinesToFile File="wwwroot\templates.html" Lines="@(TemplateLines)" Overwrite="true" />
   </Target>
 
   <Target Name="ConcatenateScripts" Inputs="@(ScriptFiles)" Outputs="wwwroot\js\scripts.js" AfterTargets="Build">
-    <ReadLinesFromFile File="%(ScriptFiles.Identity)">
+    <ReadLinesFromFileWithFilter File="%(ScriptFiles.Identity)">
       <Output TaskParameter="Lines" ItemName="ScriptLines" />
-    </ReadLinesFromFile>
+    </ReadLinesFromFileWithFilter>
     <WriteLinesToFile File="wwwroot\js\scripts.js" Lines="@(ScriptLines)" Overwrite="true" />
   </Target>
 
