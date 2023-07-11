@@ -5,7 +5,7 @@
 	  AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
 		<ParameterGroup>
 			<File ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
-			<ExcludeRegEx ParameterType="System.String" />
+			<ExcludeRegex ParameterType="System.String" />
 			<Lines ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
 		</ParameterGroup>
 		<Task>
@@ -21,13 +21,23 @@
 					string[] fileLines = System.IO.File.ReadAllLines(path);
 					for (int j = 0; j < fileLines.Length; j++)
 					{
-						if (!string.IsNullOrEmpty(fileLines[j]))
+						if (ShouldOutputLine(fileLines[j]))
 						{
 							tasks.Add(new TaskItem(fileLines[j]));
 						}
 					}
 				}
 				Lines = tasks.ToArray();
+				
+				bool ShouldOutputLine(string line)
+				{
+					// Don't output if the line is empty.
+					// If ExcludeRegex is not provided, skip the regex.
+					// Othewise, don't output if the regex matches.
+					return !string.IsNullOrEmpty(line) &&
+						(string.IsNullOrEmpty(ExcludeRegex) ||
+						!System.Text.RegularExpressions.Regex.IsMatch(line, ExcludeRegex));
+				}
 				]]>
 			</Code>
 		</Task>
