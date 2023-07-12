@@ -39,9 +39,11 @@ var staticFileOptions = new StaticFileOptions()
 app.UseStaticFiles(staticFileOptions);
 
 app.UseRouting();
+#pragma warning disable ASP0014 // Suggest using top level route registrations
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapFallbackToFile("index.html", staticFileOptions);
 });
+#pragma warning restore ASP0014 // Suggest using top level route registrations
 
 app.Run();
