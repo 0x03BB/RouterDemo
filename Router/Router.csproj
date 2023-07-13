@@ -22,8 +22,6 @@
 
   <ItemGroup>
     <TemplateFiles Include="templates\**\*" />
-    <ScriptFiles Include="build\**\*" Exclude="build\main.js;build\types.js" />
-    <ScriptFiles Include="build\main.js" />
   </ItemGroup>
 
   <Target Name="ConcatenateTemplates" Inputs="@(TemplateFiles)" Outputs="wwwroot\templates.html" BeforeTargets="Build">
@@ -33,7 +31,11 @@
     <WriteLinesToFile File="wwwroot\templates.html" Lines="@(TemplateLines)" Overwrite="true" />
   </Target>
 
-  <Target Name="ConcatenateScripts" Inputs="@(ScriptFiles)" Outputs="wwwroot\js\scripts.js" AfterTargets="Build">
+  <Target Name="ConcatenateScripts" DependsOnTargets="Build" Outputs="wwwroot\js\scripts.js" AfterTargets="Build">
+    <ItemGroup>
+      <ScriptFiles Include="build\**\*" Exclude="build\main.js;build\types.js" />
+      <ScriptFiles Include="build\main.js" />
+    </ItemGroup>
     <ReadLinesFromFileWithFilter File="%(ScriptFiles.Identity)" ExcludeRegex="^(import|export).*$">
       <Output TaskParameter="Lines" ItemName="ScriptLines" />
     </ReadLinesFromFileWithFilter>
