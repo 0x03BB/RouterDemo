@@ -27,15 +27,20 @@ class AbortHelper {
     }
 
     /**
-     * To be called when an operation has run to completion.
+     * Call this when an operation has run to completion.
      */
     complete() {
         this.#completed = true;
     }
 
-    abort() {
-        this.#completed = true;
-        this.#abortControler.abort();
+    /**
+     * Aborts the signal if complete() hasn't been called, but does not ready the signal for new use.
+     */
+    stop() {
+        if (!this.#completed) {
+            this.#completed = true;
+            this.#abortControler.abort();
+        }
     }
 }
 

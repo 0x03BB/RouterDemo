@@ -5,7 +5,7 @@ class Weather implements Page {
     #rowTemplate: HTMLTemplateElement;
     #errorTemplate: HTMLTemplateElement;
     #callback?: () => Promise<void>;
-    #abortHelper: AbortHelper;
+    #abortHelper: AbortHelper = new AbortHelper();
 
     route = '/weather';
 
@@ -13,7 +13,6 @@ class Weather implements Page {
         this.#template = templateDocument.getElementById('weather') as HTMLTemplateElement;
         this.#rowTemplate = templateDocument.getElementById('weather-row') as HTMLTemplateElement;
         this.#errorTemplate = templateDocument.getElementById('weather-error') as HTMLTemplateElement;
-        this.#abortHelper = new AbortHelper();
     }
 
     load(parentElement: HTMLElement) {
@@ -66,7 +65,7 @@ class Weather implements Page {
     }
 
     unload() {
-        this.#abortHelper.abort();
+        this.#abortHelper.stop();
     }
 }
 
