@@ -7,7 +7,7 @@ class Weather implements Page {
     #callback?: () => Promise<void>;
     #abortHelper: AbortHelper = new AbortHelper();
 
-    route = '/weather';
+    path = '/weather';
 
     constructor(templateDocument: Document) {
         this.#template = templateDocument.getElementById('weather') as HTMLTemplateElement;

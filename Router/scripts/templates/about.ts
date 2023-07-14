@@ -1,7 +1,7 @@
 class About implements Page {
     #template: HTMLTemplateElement;
 
-    route = '/about';
+    path = '/about';
 
     constructor(templateDocument: Document) {
         this.#template = templateDocument.getElementById('about') as HTMLTemplateElement;

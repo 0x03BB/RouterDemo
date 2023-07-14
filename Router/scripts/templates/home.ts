@@ -1,7 +1,7 @@
 class Home implements Page {
     #template: HTMLTemplateElement;
 
-    route = '/';
+    path = '/';
 
     constructor(templateDocument: Document) {
         this.#template = templateDocument.getElementById('home') as HTMLTemplateElement;

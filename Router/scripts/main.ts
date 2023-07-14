@@ -14,12 +14,8 @@ Router.initialize(
     appDiv,
     (parentElement) => {
         parentElement.replaceChildren(notFoundTemplate.content.cloneNode(true));
-    },
-    [
+    }, [
         new Home(templateDocument),
         new Weather(templateDocument),
         new About(templateDocument)
-    ]
-);
-
-Router.route();
+    ]);
