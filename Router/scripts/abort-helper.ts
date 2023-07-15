@@ -34,7 +34,7 @@ class AbortHelper {
     }
 
     /**
-     * Aborts the signal if complete() hasn't been called, but does not ready the signal for new use.
+     * Aborts the signal if complete() hasn't been called, but does not ready the signal for new use. start() may be called after this.
      */
     stop() {
         if (!this.#completed) {
