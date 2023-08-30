@@ -1,4 +1,4 @@
-class Router {
+export class Router {
     static #currentPage?: Page;
 
     static parentElement: HTMLElement;
@@ -90,5 +90,3 @@ class Router {
         }
     }
 }
-
-export { Router };

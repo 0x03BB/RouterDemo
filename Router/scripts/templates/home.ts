@@ -1,5 +1,5 @@
-class Home implements Page {
-    #template: HTMLTemplateElement;
+export class Home implements Page {
+    readonly #template: HTMLTemplateElement;
 
     path = '/';
 
@@ -11,8 +11,6 @@ class Home implements Page {
         parentElement.replaceChildren(this.#template.content.cloneNode(true));
     }
 
-    reload(parentElement: HTMLElement) {
+    reload() {
     }
 }
-
-export { Home };

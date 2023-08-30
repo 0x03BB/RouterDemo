@@ -2,11 +2,10 @@
   "compilerOptions": {
     "strict": true,
     "noEmitOnError": true,
+    "noEmit": true,
     "removeComments": true,
-    "sourceMap": false,
     "target": "es2022",
     "module": "es2022",
-    "outDir": "build",
     "typeRoots": [ "./types" ]
   },
   "include": [

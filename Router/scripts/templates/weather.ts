@@ -1,11 +1,12 @@
 import { AbortHelper } from '../abort-helper.js';
 
-class Weather implements Page {
-    #template: HTMLTemplateElement;
-    #rowTemplate: HTMLTemplateElement;
-    #errorTemplate: HTMLTemplateElement;
-    #callback?: () => Promise<void>;
-    #abortHelper: AbortHelper = new AbortHelper();
+export class Weather implements Page {
+    readonly #template: HTMLTemplateElement;
+    readonly #rowTemplate: HTMLTemplateElement;
+    readonly #errorTemplate: HTMLTemplateElement;
+    readonly #abortHelper: AbortHelper = new AbortHelper();
+
+    #updateCallback?: () => Promise<void>;
 
     path = '/weather';
 
@@ -22,58 +23,67 @@ class Weather implements Page {
         const tableBody = document.getElementById('table-body') as HTMLElement;
         const loadingIndicator = document.getElementById('loading-indicator') as HTMLDivElement;
 
-        update.addEventListener('click', this.#callback = () => this.#fetchWeather(tableBody, loadingIndicator), { passive: true });
-        this.#callback();
+        update.addEventListener('click', this.#updateCallback = () => this.#update(tableBody, loadingIndicator), { passive: true });
+        this.#updateCallback();
     }
 
-    async #fetchWeather(tableBody: HTMLElement, loadingIndicator: HTMLDivElement) {
+    async #update(tableBody: HTMLElement, loadingIndicator: HTMLDivElement) {
         loadingIndicator.style.display = '';
         this.#abortHelper.start();
         const signal = this.#abortHelper.signal;
         try {
             const response = await fetch('/api/WeatherForecast', { signal });
             if (response.ok) {
-                const items = await response.json() as WeatherForecast[];
-
-                tableBody.replaceChildren();
-                items.forEach(item => {
-                    let newRow = this.#rowTemplate.content.cloneNode(true) as HTMLTableRowElement;
-                    let newCells = newRow.firstElementChild!.children;
-                    newCells[0].textContent = item.date.toString();
-                    newCells[1].textContent = item.temperatureF.toString();
-                    if (item.summary !== undefined) {
-                        newCells[2].textContent = item.summary;
-                    }
-                    tableBody.appendChild(newRow);
-                });
+                const weatherForecasts = await response.json() as WeatherForecast[];
+                this.#updatePage(tableBody, weatherForecasts);
+                
             } else {
-                tableBody.replaceChildren(this.#errorTemplate.content.cloneNode(true));
+                this.#updatePageWithError(tableBody);
             }
-            loadingIndicator.style.display = 'none';
             this.#abortHelper.complete();
+            loadingIndicator.style.display = 'none';
         } catch (error) {
             if (!(error instanceof DOMException) || error.name !== 'AbortError') {
-                tableBody.replaceChildren(this.#errorTemplate.content.cloneNode(true));
-                loadingIndicator.style.display = 'none';
                 this.#abortHelper.complete();
+                this.#updatePageWithError(tableBody);
+                loadingIndicator.style.display = 'none';
             }
         }
     }
 
-    reload(parentElement: HTMLElement) {
-        this.#callback!();
+    reload() {
+        this.#updateCallback!();
     }
 
     unload() {
         this.#abortHelper.stop();
+        this.#updateCallback = undefined;
+    }
+
+    #updatePage(tableBody: HTMLElement, weatherForecasts: WeatherForecast[]) {
+        tableBody.replaceChildren();
+        for (let weatherForecast of weatherForecasts) {
+            tableBody.appendChild(this.#createRow(weatherForecast));
+        }
+    }
+
+    #createRow(weatherForecast: WeatherForecast) {
+        let newRow = this.#rowTemplate.content.cloneNode(true) as HTMLTableRowElement;
+        let newCells = newRow.firstElementChild!.children;
+        newCells[0].textContent = new Date(weatherForecast.date).toLocaleString();
+        newCells[1].textContent = weatherForecast.temperatureF.toString();
+        newCells[2].textContent = weatherForecast.summary;
+        return newRow;
+    }
+
+    #updatePageWithError(tableBody: HTMLElement) {
+        tableBody.replaceChildren(this.#errorTemplate.content.cloneNode(true));
     }
 }
 
-export { Weather };
-
 type WeatherForecast = {
-    date: Date;
+    date: string;
     temperatureC: number;
     temperatureF: number;
-    summary?: string;
+    summary: string | null;
 };

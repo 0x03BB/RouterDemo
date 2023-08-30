@@ -1,7 +1,5 @@
-build/
-/Router/wwwroot/templates.html
-
-# JavaScript generated from TypeScript
+# Build results
+**/wwwroot/templates.html
 **/wwwroot/js/
 
 ## Ignore Visual Studio temporary files, build results, and
