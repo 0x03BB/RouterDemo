@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.StaticFiles;
+using Router.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -15,13 +14,15 @@ app.MapWhen(context => context.Request.Path.StartsWithSegments("/api"), api =>
 {
     if (!app.Environment.IsDevelopment())
     {
-        api.UseExceptionHandler("/api/error");
+        api.UseExceptionHandler(exceptionHandler =>
+            exceptionHandler.Run(async context =>
+                await Results.Problem().ExecuteAsync(context)));
     }
 
     api.UseRouting();
     api.UseEndpoints(endpoints =>
     {
-        endpoints.MapControllers();
+        endpoints.MapWeatherForecast();
     });
 });
 
